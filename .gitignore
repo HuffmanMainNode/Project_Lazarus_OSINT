@@ -1,0 +1,24 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Local databases and runtime state
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+archive_state.json
+
+# Test/build output
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
