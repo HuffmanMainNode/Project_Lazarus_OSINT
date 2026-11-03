@@ -30,15 +30,24 @@ def build_parser():
 def main(argv=None):
     parser = build_parser()
     args = parser.parse_args(argv)
+    failures = []
 
     if args.command == "ingest":
         if args.trades or args.all:
-            from ingestion.ingest_trades import ingest_trades
-            ingest_trades()
+            try:
+                from ingestion.ingest_trades import ingest_trades
+                ingest_trades()
+            except Exception as error:
+                logger.error("Trade ingestion failed: %s", type(error).__name__)
+                failures.append("trades")
         if args.politicians or args.all:
-            from ingestion.ingest_politicians import parse_and_ingest
-            parse_and_ingest()
-        return 0
+            try:
+                from ingestion.ingest_politicians import parse_and_ingest
+                parse_and_ingest()
+            except Exception as error:
+                logger.error("Politician ingestion failed: %s", type(error).__name__)
+                failures.append("politicians")
+        return 1 if failures else 0
 
     if args.command == "redflags":
         from analysis.redflag_engine import RedFlagEngine
