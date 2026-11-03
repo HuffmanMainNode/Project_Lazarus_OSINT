@@ -7,7 +7,7 @@ from models.scores import PoliticianScore
 
 
 def test_calculate_score_is_deterministic_and_bounded():
-    engine = RankingEngine(db=None)
+    engine = RankingEngine.__new__(RankingEngine)
     assert engine.calculate_score([]) == 0.0
     assert engine.calculate_score([SimpleNamespace(severity=3)]) == 25.92
     assert engine.calculate_score([
