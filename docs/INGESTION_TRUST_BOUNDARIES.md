@@ -11,6 +11,7 @@ A record must not enter the research database merely because a scraper or adapte
 - Committee ingestion: disabled. The prior implementation assigned memberships using `hash(full_name) % 2`; these were arbitrary and are not evidence.
 - Committee-sector red-flag rule: disabled until dated, sourced membership records are available.
 - QuiverQuant: requires `QUIVERQUANT_API_TOKEN`; the placeholder token is not used.
+- Legislator ingestion reads only a caller-supplied `LEGISLATORS_JSON_PATH` or the documented project data path. Date-of-birth ingestion is off by default; enabling it requires the explicit `include_date_of_birth=True` argument.
 
 ## Trade identity and retry behavior
 
