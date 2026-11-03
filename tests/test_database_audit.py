@@ -42,6 +42,7 @@ def test_reports_schema_counts_and_sensitive_column_names_without_row_values(tmp
     }
     politician_report = next(t for t in report["tables"] if t["table"] == "politicians")
     assert "date_of_birth" in politician_report["potentially_sensitive_columns"]
+    assert politician_report["sensitive_column_non_null_counts"]["date_of_birth"] == 2
     assert politician_report["duplicate_identifier_counts"]["external_id"] == 1
     trade_report = next(t for t in report["tables"] if t["table"] == "trades")
     assert trade_report["date_coverage"]["trade_date"]["minimum"] == "2020-01-01"
