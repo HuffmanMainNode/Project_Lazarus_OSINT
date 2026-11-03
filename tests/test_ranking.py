@@ -28,6 +28,7 @@ def test_run_ranking_persists_review_score(db_session):
     politician = Politician(full_name="Test Official", external_id="TEST-001")
     db_session.add(politician)
     db_session.flush()
+    politician_id = politician.id
     db_session.add(RedFlag(
         politician_id=politician.id,
         rule_code="TEST_SIGNAL",
@@ -40,6 +41,6 @@ def test_run_ranking_persists_review_score(db_session):
     engine.run_ranking()
 
     score = db_session.query(PoliticianScore).filter_by(
-        politician_id=politician.id
+        politician_id=politician_id
     ).one()
     assert score.corruption_score == 25.92
