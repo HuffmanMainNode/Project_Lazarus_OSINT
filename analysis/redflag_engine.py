@@ -5,6 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.database import SessionLocal
 from models.trades import Trade
 from models.red_flags import RedFlag
+from sqlalchemy.orm import joinedload
 
 logger = logging.getLogger(__name__)
 
