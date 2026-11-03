@@ -36,7 +36,7 @@ def get_or_create_unknown_issuer(db):
 
 def build_external_trade_id(item):
     """Build a stable source ID, preferring a provider-supplied transaction ID."""
-    for key in ("transaction_id", "TransactionID", "Transaction Id", "id"):
+    for key in ("transaction_id", "TransactionID", "Transaction Id", "filing_id", "FilingID", "PTR", "id"):
         value = item.get(key)
         if value not in (None, ""):
             return f"QUIVER:{value}"
@@ -47,7 +47,6 @@ def build_external_trade_id(item):
         "ticker": item.get("Ticker"),
         "transaction": item.get("Transaction"),
         "amount": item.get("Amount"),
-        "last_modified": item.get("last_modified"),
     }
     if not stable_fields["bioguide_id"] or not stable_fields["date"] or not stable_fields["transaction"]:
         return None
