@@ -10,7 +10,7 @@ An experimental, local-first research prototype for organizing public financial-
 - Early ingestion modules for selected public disclosure sources.
 - Heuristic review rules for disclosure timing, broad sector/committee-name overlap, and high-value reported purchases.
 - A ranking formula that aggregates rule severity. It is an uncalibrated research heuristic, not a probability, legal conclusion, or finding of corruption.
-- The supported CLI commands are `ingest --trades`, `ingest --politicians`, `ingest --all`, `redflags --run`, and `score --all`. Individual-person scoring and export are not implemented and are not advertised as working commands.
+- The supported CLI commands are `ingest --trades`, `ingest --politicians`, `ingest --all`, `redflags --run`, and `score --all`. Individual-person scoring and export are not implemented and are not advertised as working commands. Legislator JSON is supplied through `LEGISLATORS_JSON_PATH`; date-of-birth ingestion is disabled by default and requires an explicit opt-in.
 
 ## Data-source and coverage limitations
 
