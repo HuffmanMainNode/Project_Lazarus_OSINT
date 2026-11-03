@@ -19,7 +19,7 @@ An experimental, local-first research prototype for organizing public financial-
 - The QuiverQuant wrapper requires a valid provider token. The placeholder token in source code is not a credential and will not authenticate.
 - A Capitol Trades wrapper exists, but the current trade-ingestion path does not use it.
 - Some ingestion paths contain placeholder behavior and incomplete identity/date matching. Do not treat imported records as authoritative without checking the original filing.
-- The tracked SQLite database is a historical project artifact. Its structure can be screened with the [database review procedure](docs/DATABASE_REVIEW.md), but its full contents and provenance still require human review; no claim is made here that every row has been independently verified.
+- The tracked SQLite database is a historical project artifact. A metadata-only scan found 548 politician records with populated date-of-birth fields and trade dates spanning April 2025 to April 2026. Its structure can be screened with the [database review procedure](docs/DATABASE_REVIEW.md), but its full contents, source provenance, and publication authorization still require human review; no claim is made here that every row has been independently verified.
 
 ## Research and responsible-use rules
 
