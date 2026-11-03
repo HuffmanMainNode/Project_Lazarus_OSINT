@@ -10,16 +10,16 @@ An experimental, local-first research prototype for organizing public financial-
 - Early ingestion modules for selected public disclosure sources.
 - Heuristic review rules for disclosure timing, broad sector/committee-name overlap, and high-value reported purchases.
 - A ranking formula that aggregates rule severity. It is an uncalibrated research heuristic, not a probability, legal conclusion, or finding of corruption.
-- A partial CLI. The red-flag and all-politician scoring commands invoke analysis modules; several ingest, individual-score, and export command paths currently print status/help rather than execute a complete workflow.
+- The supported CLI commands are `ingest --trades`, `ingest --politicians`, `ingest --all`, `redflags --run`, and `score --all`. Individual-person scoring and export are not implemented and are not advertised as working commands.
 
 ## Data-source and coverage limitations
 
 - No verified 1980-to-present coverage claim is made.
-- The SEC EDGAR adapter currently returns a hard-coded example record; it is not a live SEC filing client.
+- The SEC EDGAR adapter is disabled until a real filing client, identity mapping, and Form 4 transaction parser exist.
 - The QuiverQuant wrapper requires a valid provider token. The placeholder token in source code is not a credential and will not authenticate.
 - A Capitol Trades wrapper exists, but the current trade-ingestion path does not use it.
-- Some ingestion paths contain placeholder behavior and incomplete identity/date matching. Do not treat imported records as authoritative without checking the original filing.
-- The tracked SQLite database is a historical project artifact. A metadata-only scan found 548 politician records with populated date-of-birth fields and trade dates spanning April 2025 to April 2026. Its structure can be screened with the [database review procedure](docs/DATABASE_REVIEW.md), but its full contents, source provenance, and publication authorization still require human review; no claim is made here that every row has been independently verified.
+- State, executive, and judicial sample adapters are disabled until verified source adapters exist. Committee ingestion is disabled because the previous implementation assigned committee memberships arbitrarily.
+- The tracked SQLite database is a historical project artifact. It contains 536 committee-assignment links created by the old arbitrary assignment routine. Those links are unverified, and the committee-conflict scoring rule is disabled until official membership evidence is available. A metadata-only scan found 548 politician records with populated date-of-birth fields and trade dates spanning April 2025 to April 2026. Its structure can be screened with the [database review procedure](docs/DATABASE_REVIEW.md), but its full contents, source provenance, and publication authorization still require human review; no claim is made here that every row has been independently verified.
 
 ## Research and responsible-use rules
 
