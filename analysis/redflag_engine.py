@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class RedFlagEngine:
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db=None):
+        self.db = db if db is not None else SessionLocal()
 
     def check_timing_rules(self, trade):
         if trade.days_until_disclosure and trade.days_until_disclosure > 45:
