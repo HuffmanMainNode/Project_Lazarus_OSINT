@@ -5,8 +5,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.database import SessionLocal
 from models.trades import Trade
 from models.red_flags import RedFlag
-from models.politicians import Politician
-from sqlalchemy.orm import joinedload
 
 logger = logging.getLogger(__name__)
 
@@ -29,16 +27,10 @@ class RedFlagEngine:
             )
 
     def check_sector_conflicts(self, trade):
-        politician = self.db.query(Politician).options(
-            joinedload(Politician.committees)
-        ).filter_by(id=trade.politician_id).first()
-        if politician and trade.issuer and trade.issuer.sector:
-            for committee in politician.committees:
-                if trade.issuer.sector.lower() in committee.name.lower():
-                    self._create_red_flag(
-                        trade, "COMMITTEE_SECTOR_CONFLICT", 5,
-                        f"Reported trade sector ({trade.issuer.sector}) overlaps committee name ({committee.name}); review context and disclosures."
-                    )
+        # Committee links in the historical dataset were generated
+        # arbitrarily, not sourced from official membership records.
+        # Keep this rule disabled until verified, dated memberships exist.
+        return None
 
     def check_pattern_rules(self, trade):
         if trade.trade_type == "Purchase" and trade.trade_amount_min and trade.trade_amount_min >= 100000:
