@@ -124,3 +124,42 @@ def test_ingestion_retries_update_the_same_stable_trade_record(db_session):
     assert first == {"inserted": 1, "updated": 0, "skipped": 0}
     assert second == {"inserted": 0, "updated": 1, "skipped": 0}
     assert db_session.query(Trade).count() == 1
+
+from ingestion.ingest_politicians import parse_and_ingest
+
+
+def test_legislator_ingestion_omits_date_of_birth_by_default(db_session, tmp_path):
+    import json
+
+    source = tmp_path / "legislators.json"
+    source.write_text(json.dumps([{
+        "id": {"bioguide": "A000777"},
+        "name": {"first": "Example", "last": "Official"},
+        "bio": {"birthday": "1970-01-02"},
+        "terms": [{"type": "rep", "party": "Independent", "state": "ZZ", "district": 1}],
+    }]), encoding="utf-8")
+
+    assert parse_and_ingest(file_path=source, db=db_session) == 1
+    official = db_session.query(Politician).filter_by(external_id="A000777").one()
+    assert official.date_of_birth is None
+
+
+def test_legislator_date_of_birth_requires_explicit_opt_in(db_session, tmp_path):
+    import json
+    from datetime import date
+
+    source = tmp_path / "legislators.json"
+    source.write_text(json.dumps([{
+        "id": {"bioguide": "A000778"},
+        "name": {"first": "Example", "last": "Official"},
+        "bio": {"birthday": "1970-01-02"},
+        "terms": [],
+    }]), encoding="utf-8")
+
+    assert parse_and_ingest(
+        file_path=source,
+        db=db_session,
+        include_date_of_birth=True,
+    ) == 1
+    official = db_session.query(Politician).filter_by(external_id="A000778").one()
+    assert official.date_of_birth == date(1970, 1, 2)
