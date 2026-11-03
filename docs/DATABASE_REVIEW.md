@@ -6,7 +6,7 @@ Run the metadata-only review before publishing or retaining a generated database
 python scripts/audit_sqlite_metadata.py lazarus_politrack.db
 ```
 
-The report emits table names, row counts, column names/types, likely sensitive column names, duplicate identifier counts, date coverage for trade/disclosure dates, file size, and SQLite's structural integrity result. It does not print row values.
+The report emits table names, row counts, column names/types, likely sensitive column names and non-null counts, duplicate identifier counts, date coverage for trade/disclosure dates, file size, and SQLite's structural integrity result. It does not print row values.
 
 ## Important limits
 
