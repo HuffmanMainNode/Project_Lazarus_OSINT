@@ -70,6 +70,9 @@ class RedFlagEngine:
             description=description
         )
         self.db.add(red_flag)
+        # SessionLocal disables autoflush; flush so a repeated evaluation in
+        # this transaction can observe the newly inserted finding.
+        self.db.flush()
         return red_flag
 
     def run_analysis(self):
