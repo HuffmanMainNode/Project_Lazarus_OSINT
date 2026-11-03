@@ -9,20 +9,31 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: lazarus-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
       - name: Install test dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest sqlalchemy pandas requests
+        run: python -m pip install -r requirements-dev.txt
       - name: Run tests
-        run: python -m pytest tests/
+        run: python -m pytest tests/ -q
       - name: Audit tracked database metadata
         run: python scripts/audit_sqlite_metadata.py lazarus_politrack.db

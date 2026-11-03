@@ -37,13 +37,20 @@ This is a prototype, not a continuously operating or decentralized service. No a
 
 The ranking and red-flag engines are being hardened to avoid fabricated fallback data and destructive recalculation. Their remaining limits, including an uncalibrated score and the absence of a formal stale-finding lifecycle, are documented in the active remediation work.
 
+## Local installation
+
+See [docs/INSTALLATION.md](docs/INSTALLATION.md) for the supported Python environment, dependency installation, configuration, CLI commands, and test instructions. The repository now includes dependency range files; they are not a fully pinned deployment lockfile.
+
 ## Running tests
 
-The GitHub Actions workflow currently installs pytest, SQLAlchemy, pandas, and requests, then runs:
+Install the development dependencies with `python -m pip install -r requirements-dev.txt`, then run:
 
 ```bash
-python -m pytest tests/
+python -m pytest tests/ -q
+python scripts/audit_sqlite_metadata.py lazarus_politrack.db
 ```
+
+CI runs these checks on Python 3.10 through 3.13. See [Local installation](docs/INSTALLATION.md) for details.
 
 The repository still needs a maintained dependency manifest and a clean-install guide. Do not assume a production installation path is complete.
 
