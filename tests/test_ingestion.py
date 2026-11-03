@@ -69,3 +69,57 @@ def test_trade_date_and_amount_parsers_handle_invalid_inputs():
     assert parse_trade_date("not-a-date") is None
     assert parse_amount_range("$1,000 - $15,000") == (1000.0, 15000.0)
     assert parse_amount_range("unknown") == (None, None)
+
+
+from ingestion.ingest_trades import ingest_trades
+from models.issuers import Issuer
+from models.politicians import Politician
+from models.trades import Trade
+
+
+class FakeTradeAPI:
+    def __init__(self, records):
+        self.records = records
+
+    def get_house_trading(self):
+        return self.records
+
+
+def test_ingestion_skips_unmatched_official_instead_of_assigning_first_person(db_session):
+    record = {
+        "transaction_id": "PTR-UNKNOWN",
+        "BioGuideID": "NOT-IN-DATABASE",
+        "Representative": "Unmatched Official",
+        "Date": "2026-01-01",
+        "Ticker": "ABC",
+        "Transaction": "Purchase",
+        "Amount": "$1,000 - $15,000",
+        "last_modified": "2026-02-01",
+    }
+    result = ingest_trades(db=db_session, api=FakeTradeAPI([record]))
+    assert result == {"inserted": 0, "updated": 0, "skipped": 1}
+    assert db_session.query(Trade).count() == 0
+
+
+def test_ingestion_retries_update_the_same_stable_trade_record(db_session):
+    official = Politician(full_name="Known Official", external_id="A000001")
+    issuer = Issuer(name="Example Corp", ticker="ABC")
+    db_session.add_all([official, issuer])
+    db_session.commit()
+
+    record = {
+        "BioGuideID": "A000001",
+        "Representative": "Known Official",
+        "Date": "2026-01-01",
+        "Ticker": "ABC",
+        "Transaction": "Purchase",
+        "Amount": "$1,000 - $15,000",
+        "last_modified": "2026-02-01",
+    }
+    api = FakeTradeAPI([record])
+    first = ingest_trades(db=db_session, api=api)
+    second = ingest_trades(db=db_session, api=api)
+
+    assert first == {"inserted": 1, "updated": 0, "skipped": 0}
+    assert second == {"inserted": 0, "updated": 1, "skipped": 0}
+    assert db_session.query(Trade).count() == 1
