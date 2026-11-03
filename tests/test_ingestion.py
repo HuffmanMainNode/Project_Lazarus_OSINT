@@ -50,6 +50,7 @@ def test_trade_id_is_deterministic_and_prefers_provider_id():
     }
     assert build_external_trade_id(item) == build_external_trade_id(item)
     assert build_external_trade_id({**item, "transaction_id": "PTR-123"}) == "QUIVER:PTR-123"
+    assert build_external_trade_id({**item, "last_modified": "2026-03-01"}) == build_external_trade_id(item)
 
 
 def test_trade_id_refuses_insufficient_identity():
