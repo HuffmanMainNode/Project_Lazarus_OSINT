@@ -43,11 +43,14 @@ See [docs/INSTALLATION.md](docs/INSTALLATION.md) for the supported Python enviro
 
 ## Running tests
 
-The GitHub Actions workflow currently installs pytest, SQLAlchemy, pandas, and requests, then runs:
+Install the development dependencies with `python -m pip install -r requirements-dev.txt`, then run:
 
 ```bash
-python -m pytest tests/
+python -m pytest tests/ -q
+python scripts/audit_sqlite_metadata.py lazarus_politrack.db
 ```
+
+CI runs these checks on Python 3.10 through 3.13. See [Local installation](docs/INSTALLATION.md) for details.
 
 The repository still needs a maintained dependency manifest and a clean-install guide. Do not assume a production installation path is complete.
 
