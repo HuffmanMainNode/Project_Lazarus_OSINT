@@ -1,13 +1,14 @@
 import json
 import logging
 import os
+from pathlib import Path
 from datetime import datetime
 import sys
 
 # Ensure the project root is in the path to allow imports
-project_dir = '/content/TheLazarusPoliticianPortfolioTrackerByMrCakes931'
-if project_dir not in sys.path:
-    sys.path.append(project_dir)
+project_dir = Path(__file__).resolve().parents[1]
+if str(project_dir) not in sys.path:
+    sys.path.insert(0, str(project_dir))
 
 from core.database import SessionLocal
 from models.politicians import Politician
@@ -15,16 +16,18 @@ from models.politicians import Politician
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def parse_and_ingest():
+def parse_and_ingest(file_path=None):
     db = SessionLocal()
-    file_path = os.path.join(project_dir, 'legislators-current.json')
+    configured_path = file_path or os.environ.get('LEGISLATORS_JSON_PATH')
+    file_path = Path(configured_path) if configured_path else project_dir / 'data' / 'legislators-current.json'
     
-    if not os.path.exists(file_path):
-        logger.error(f"File not found: {file_path}")
-        return
+    if not file_path.is_file():
+        logger.error("Legislator source file not found at %s; set LEGISLATORS_JSON_PATH.", file_path)
+        db.close()
+        return 0
         
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             
         logger.info(f"Loaded {len(data)} records from JSON. Processing...")
@@ -88,11 +91,13 @@ def parse_and_ingest():
                 pol.date_of_birth = dob
                 
         db.commit()
-        logger.info(f"Successfully ingested politicians.")
+        logger.info("Successfully ingested politicians.")
+        return len(data)
         
-    except Exception as e:
+    except Exception:
         db.rollback()
-        logger.error(f"Error ingesting politicians: {e}")
+        logger.exception("Error ingesting politicians")
+        raise
     finally:
         db.close()
 
