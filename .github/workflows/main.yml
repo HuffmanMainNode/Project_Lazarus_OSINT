@@ -24,3 +24,5 @@ jobs:
           python -m pip install pytest sqlalchemy pandas requests
       - name: Run tests
         run: python -m pytest tests/
+      - name: Audit tracked database metadata
+        run: python scripts/audit_sqlite_metadata.py lazarus_politrack.db
