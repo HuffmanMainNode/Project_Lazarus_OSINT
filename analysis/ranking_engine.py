@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class RankingEngine:
     def __init__(self, db=None):
+        self._owns_session = db is None
         self.db = db if db is not None else SessionLocal()
 
     def calculate_score(self, red_flags):
@@ -69,7 +70,8 @@ class RankingEngine:
             logger.exception("Error during ranking analysis")
             raise
         finally:
-            self.db.close()
+            if self._owns_session:
+                self.db.close()
 
 
 if __name__ == "__main__":
