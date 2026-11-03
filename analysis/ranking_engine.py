@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class RankingEngine:
-    def __init__(self):
-        self.db = SessionLocal()
+    def __init__(self, db=None):
+        self.db = db if db is not None else SessionLocal()
 
     def calculate_score(self, red_flags):
         if not red_flags:
