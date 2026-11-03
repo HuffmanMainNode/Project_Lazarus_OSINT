@@ -75,6 +75,16 @@ def inspect_database(database_path: str | Path) -> dict:
                         "maximum": maximum,
                     }
 
+            sensitive_columns = [
+                name for name in column_names if SENSITIVE_COLUMN.search(name)
+            ]
+            sensitive_non_null_counts = {}
+            for column_name in sensitive_columns:
+                column_sql = _quoted_identifier(column_name)
+                sensitive_non_null_counts[column_name] = connection.execute(
+                    f"SELECT COUNT(*) FROM {table_sql} WHERE {column_sql} IS NOT NULL"
+                ).fetchone()[0]
+
             table_reports.append({
                 "table": table_name,
                 "row_count": row_count,
@@ -82,9 +92,8 @@ def inspect_database(database_path: str | Path) -> dict:
                     {"name": column["name"], "type": column["type"]}
                     for column in columns
                 ],
-                "potentially_sensitive_columns": [
-                    name for name in column_names if SENSITIVE_COLUMN.search(name)
-                ],
+                "potentially_sensitive_columns": sensitive_columns,
+                "sensitive_column_non_null_counts": sensitive_non_null_counts,
                 "duplicate_identifier_counts": duplicate_counts,
                 "date_coverage": date_coverage,
             })
