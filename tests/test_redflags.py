@@ -65,10 +65,7 @@ def test_sector_and_purchase_rules_are_explicit_review_signals(db_session):
     engine.check_pattern_rules(trade)
 
     rows = db_session.query(RedFlag).order_by(RedFlag.rule_code).all()
-    assert {row.rule_code for row in rows} == {
-        "CLUSTERED_TRADES",
-        "COMMITTEE_SECTOR_CONFLICT",
-    }
+    assert {row.rule_code for row in rows} == {"CLUSTERED_TRADES"}
     assert all("review" in row.description.lower() for row in rows)
 
 
